@@ -85,8 +85,8 @@ export abstract class GameController extends ChessgroundController implements Ch
     // Main line ply where analysis variation starts
     plyVari: number;
 
-    constructor(el: HTMLElement, model: PyChessModel) {
-        super (el, model);
+    constructor(el: HTMLElement, model: PyChessModel, initial_fen: string | undefined) {
+        super (el, model, initial_fen);
 
         this.gameId = model["gameId"] as string;
         this.tournamentId = model["tournamentId"]

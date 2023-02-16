@@ -72,7 +72,8 @@ export class AnalysisController extends GameController {
     fsfEngineBoard: any;  // used to convert pv UCI move list to SAN
 
     constructor(el: HTMLElement, model: PyChessModel) {
-        super(el, model);
+        let initial_fen = model?.board?.steps !== undefined ? model.board.steps[0].fen : model.fen;
+        super(el, model, initial_fen);
         this.fsfDebug = false;
         this.fsfError = [];
         this.embed = this.gameId === undefined;

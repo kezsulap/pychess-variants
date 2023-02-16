@@ -88,6 +88,7 @@ VARIANTS = (
     "atomic",
     "atomic960",
     "duck",
+    "kingofthehill",
     "makruk",
     "makpong",
     "cambodian",
@@ -125,6 +126,7 @@ VARIANTS = (
     "orda",
     "synochess",
     "shinobi",
+    "shinobiplus",
     "empire",
     "ordamirror",
     "chak",
@@ -179,6 +181,8 @@ VARIANT_ICONS = {
     "chak": "🐬",
     "chennis": "🎾",
     "duck": "🦆",
+    "kingofthehill": "B",
+		"shinobiplus": "🐢"
 }
 
 VARIANT_960_TO_PGN = {
@@ -206,6 +210,7 @@ CATEGORIES = {
         "atomic",
         "atomic960",
         "duck",
+        "kingofthehill"
     ),
     "fairy": (
         "capablanca",
@@ -221,7 +226,7 @@ CATEGORIES = {
         "shogun",
         "hoppelpoppel",
     ),
-    "army": ("orda", "synochess", "shinobi", "empire", "ordamirror", "chak", "chennis"),
+    "army": ("orda", "synochess", "shinobi", "shinobiplus", "empire", "ordamirror", "chak", "chennis"),
     "makruk": ("makruk", "makpong", "cambodian", "sittuyin", "asean"),
     "shogi": (
         "shogi",
@@ -344,10 +349,12 @@ TRANSLATED_VARIANT_NAMES = {
     "orda": _("Orda Chess"),
     "synochess": _("Synochess"),
     "shinobi": _("Shinobi"),
+    "shinobiplus": _("Shinobiplus"),
     "empire": _("Empire"),
     "ordamirror": _("Orda Mirror"),
     "chak": _("Chak"),
     "chennis": _("Chennis"),
+    "kingofthehill": _("King Of The Hill"),
 }
 
 del _

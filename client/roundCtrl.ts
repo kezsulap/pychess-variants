@@ -55,7 +55,7 @@ export class RoundController extends GameController {
     finishedGame: boolean;
 
     constructor(el: HTMLElement, model: PyChessModel) {
-        super(el, model);
+        super(el, model, model.board.steps[0].fen);
         this.focus = !document.hidden;
         document.addEventListener("visibilitychange", () => {this.focus = !document.hidden});
         window.addEventListener('blur', () => {this.focus = false});

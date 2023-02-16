@@ -28,7 +28,7 @@ export abstract class ChessgroundController implements BoardController {
     fullfen: string;
     notation: cg.Notation;
 
-    constructor(el: HTMLElement, model: PyChessModel) {
+    constructor(el: HTMLElement, model: PyChessModel, initial_fen: string | undefined) {
         this.home = model.home;
 
         this.variant = VARIANTS[model.variant];
@@ -46,13 +46,30 @@ export abstract class ChessgroundController implements BoardController {
         const parts = this.fullfen.split(" ");
         const fen_placement: cg.FEN = parts[0];
 
+        let pocketRoles = this.variant.pocket?.roles;
+
+        if (model.variant === "shinobiplus" && initial_fen) {
+            let start = initial_fen.indexOf('['), end = initial_fen.indexOf(']');
+            let pocket_content = initial_fen.substr(start, end - start);
+            let white_pieces = [], black_pieces = [];
+            for (let piece of this.variant.pocket.roles['white']) {
+                if (pocket_content.indexOf(piece[0].toUpperCase()) != -1)
+                    white_pieces.push(piece)
+            }
+            for (let piece of this.variant.pocket.roles['black']) {
+                if (pocket_content.indexOf(piece[0]) != -1)
+                    black_pieces.push(piece)
+            }
+            pocketRoles = {white: white_pieces, black: black_pieces};
+        }
+
         this.chessground = Chessground(el, {
             fen: fen_placement as cg.FEN,
             dimensions: this.variant.board.dimensions,
             notation: this.notation,
             addDimensionsCssVarsTo: document.body,
             kingRoles: this.variant.kingRoles,
-            pocketRoles: this.variant.pocket?.roles,
+            pocketRoles: pocketRoles,
         }, pocket0, pocket1);
 
         boardSettings.ctrl = this;

@@ -41,6 +41,7 @@ V2C = {
     "dobutsu": "D",
     "gorogoroplus": "G",
     "shinobi": "J",
+    "shinobiplus": "X",
     "empire": "P",
     "ordamirror": "O",
     "torishogi": "T",
@@ -48,6 +49,7 @@ V2C = {
     "chak": "C",
     "chennis": "H",
     "duck": "U",
+    "kingofthehill": "B"
 }
 C2V = {v: k for k, v in V2C.items()}
 
@@ -80,6 +82,11 @@ for piece in PIECES:
 # Chennis drop moves can start with extra "+" as well (P and S are already added above for Kyoto Shogi)
 for piece in "FM":
     M2C["+%s" % piece] = m2c_len
+    m2c_len += 1
+
+#All remaining pieces for shinobiplus
+for piece in "IOTUVWXYZ":
+    M2C["%s@" % piece] = m2c_len
     m2c_len += 1
 
 C2M = {v: k for k, v in M2C.items()}

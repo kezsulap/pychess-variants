@@ -380,6 +380,9 @@ label.piece.piece1.shinobi {
 label.piece.piece2.shinobi {
     background-image: url('images/pieces/disguised/p.svg');
 }
+label.piece.piece0.shinobiplus {
+    background-image: url('images/pieces/shinobi/merida/wJ.svg');
+}
 
 label.piece.piece0.empire {
     background-image: url('images/pieces/empire/merida/wC.svg');

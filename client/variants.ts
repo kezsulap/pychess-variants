@@ -56,6 +56,7 @@ export const PIECE_FAMILIES: Record<string, PieceFamily> = {
     synochess: { pieceCSS: ["synochess0", "synochess1", "synochess2", "synochess3", "synochess4", "synochess5", "disguised"] },
     hoppel: { pieceCSS: ["hoppel0", "hoppel1", "hoppel2", "disguised"] },
     shinobi: { pieceCSS: ["shinobi0", "shinobi1", "disguised"] },
+    shinobiplus: { pieceCSS: ["shinobiplus0", "disguised"] },
     empire: { pieceCSS: ["empire0", "empire1", "disguised"] },
     ordamirror: { pieceCSS: ["ordamirror0", "ordamirror1", "disguised"] },
     chak: { pieceCSS: ["chak0", "disguised"] },
@@ -324,6 +325,15 @@ export const VARIANTS: Record<string, Variant> = {
         boardFamily: "standard8x8", pieceFamily: "standard",
         pieceRow: ["k", "q", "r", "b", "n", "p"],
         pocket: { roles: ["n", "b", "r", "q", "k"], captureToHand: false },
+        rules: { enPassant: true },
+    }),
+
+    kingofthehill: variant({
+        name: "kingofthehill", tooltip: "Draft variant",
+        startFen: "8/pppppppp/8/8/8/8/PPPPPPPP/8[KQRRBBNNkqrrbbnn] w - - 0 1",
+        icon: "B",
+        boardFamily: "standard8x8", pieceFamily: "standard",
+        pieceRow: ["k", "q", "r", "b", "n", "p"],
         rules: { enPassant: true },
     }),
 
@@ -706,6 +716,27 @@ export const VARIANTS: Record<string, Variant> = {
 
     }),
 
+    shinobiplus: variant({
+        name: "shinobiplus", tooltip: "Temporary shinobi playtesting variant",
+        startFen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/LH1CK1HL[LHMMDJ] w kq - 0 1",
+        icon: "🐢",
+        boardFamily: "standard8x8", pieceFamily: "shinobiplus",
+        colors: { first: "Pink", second: "Black" },
+        pieceRow: { white: ["k", "q", "r", "b", "n", "p", "j", "d", "s", "e", "g", "c", "f", "w", "y", "x", "t", "l", "a", "i", "h", "o", "u", "m", "v", "z"], black: ["k", "q", "r", "b", "n", "p", "j", "d", "s", "e", "g", "c", "f", "w", "y", "x", "t", "l", "a", "i", "h", "o", "u", "m", "v", "z"] },
+        pocket: { roles: { white: ["k", "q", "r", "b", "n", "p", "j", "d", "s", "e", "g", "c", "f", "w", "y", "x", "t", "l", "a", "i", "h", "o", "u", "m", "v", "z"], black: ["k", "q", "r", "b", "n", "p", "j", "d", "s", "e", "g", "c", "f", "w", "y", "x", "t", "l", "a", "i", "h", "o", "u", "m", "v", "z"] }, captureToHand: false },
+        rules: { enPassant: true },
+        ui: { boardMark: 'campmate' },
+        material: {
+            equivalences: {
+                'pl-piece': 'r-piece',
+                'ph-piece': 'n-piece',
+                'pm-piece': 'b-piece',
+                'pp-piece': 'c-piece',
+            },
+        },
+
+    }),
+
     empire: variant({
         name: "empire", tooltip: _("Asymmetric variant where one army has pieces that move like queens but capture as usual."),
         startFen: "rnbqkbnr/pppppppp/8/8/8/PPPSSPPP/8/TECDKCET w kq - 0 1",
@@ -814,12 +845,12 @@ const disabledVariants = [ "gothic", "gothhouse", "embassy", "embassyhouse", "go
 export const enabledVariants = variants.filter(v => !disabledVariants.includes(v));
 
 export const variantGroups: { [ key: string ]: { variants: string[] } } = {
-    standard: { variants: [ "chess", "crazyhouse", "placement", "atomic", "duck" ] },
+    standard: { variants: [ "chess", "crazyhouse", "placement", "atomic", "duck", "kingofthehill" ] },
     sea:      { variants: [ "makruk", "makpong", "cambodian", "sittuyin", "asean" ] },
     shogi:    { variants: [ "shogi", "minishogi", "kyotoshogi", "dobutsu", "gorogoroplus", "torishogi" ] },
     xiangqi:  { variants: [ "xiangqi", "manchu", "janggi", "minixiangqi" ] },
     fairy:    { variants: [ "capablanca", "capahouse", "seirawan", "shouse", "grand", "grandhouse", "shako", "shogun", "hoppelpoppel" ] },
-    army:     { variants: [ "orda", "synochess", "shinobi", "empire", "ordamirror", "chak", "chennis" ] },
+    army:     { variants: [ "orda", "synochess", "shinobi", "shinobiplus", "empire", "ordamirror", "chak", "chennis" ] },
 };
 
 function variantGroupLabel(group: string): string {

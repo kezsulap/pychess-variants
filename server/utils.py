@@ -784,6 +784,8 @@ def sanitize_fen(variant, initial_fen, chess960):
         non_piece = "~+0123456789[]qH-"
     elif variant == "duck":
         non_piece = "~+0123456789[]*-"
+    elif variant == "shinobiplus":
+        non_piece = "~+0123456789[]-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
     else:
         non_piece = "~+0123456789[]-"
     invalid1 = any((c not in start[0] + non_piece for c in init[0]))
