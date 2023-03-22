@@ -45,6 +45,7 @@ export class LobbyController implements ChatController {
         0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
         25, 30, 35, 40, 45, 60, 90
     ];
+    daysValues = [1, 2, 3, 5, 7, 10, 14];
     minutesStrings = ["0", "¼", "½", "¾"];
 
     constructor(el: HTMLElement, model: PyChessModel) {
@@ -298,6 +299,7 @@ export class LobbyController implements ChatController {
         // 5+3 default TC needs vMin 9 because of the partial numbers at the beginning of minutesValues
         const vMin = localStorage.seek_min ?? "9";
         const vInc = localStorage.seek_inc ?? "3";
+        const vDays = localStorage.days ?? "0";
         const vByoIdx = (localStorage.seek_byo ?? 1) - 1;
         const vRated = localStorage.seek_rated ?? "0";
         const vLevel = Number(localStorage.seek_level ?? "1");
@@ -345,27 +347,52 @@ export class LobbyController implements ChatController {
                                 },
                             }),
                         ]),
-                        h('label', { attrs: { for: "min" } }, _("Minutes per side:")),
-                        h('span#minutes'),
-                        h('input#min.slider', {
-                            props: { name: "min", type: "range", min: 0, max: this.minutesValues.length - 1, value: vMin },
-                            on: { input: e => this.setMinutes(parseInt((e.target as HTMLInputElement).value)) },
-                            hook: { insert: vnode => this.setMinutes(parseInt((vnode.elm as HTMLInputElement).value)) },
-                        }),
-                        h('label#incrementlabel', { attrs: { for: "inc" } }, ''),
-                        h('span#increment'),
-                        h('input#inc.slider', {
-                            props: { name: "inc", type: "range", min: 0, max: this.incrementValues.length - 1, value: vInc },
-                            on: { input: e => this.setIncrement(this.incrementValues[parseInt((e.target as HTMLInputElement).value)]) },
-                            hook: { insert: vnode => this.setIncrement(this.incrementValues[parseInt((vnode.elm as HTMLInputElement).value)]) },
-                        }),
-                        h('div#byoyomi-period', [
-                            h('label#byoyomiLabel', { attrs: { for: "byo" } }, _('Periods')),
-                            h('select#byo', {
-                                props: { name: "byo" },
-                            },
-                                [ 1, 2, 3 ].map((n, idx) => h('option', { props: { value: n }, attrs: { selected: (idx === vByoIdx) } }, n))
+                        h('div#tc-type-block', [
+                            h('select#tc-type', {
+                                    props: { name: "tc-type" },
+                                    on: { change: () => this.setTimeControl() },
+                                    hook: { insert: () => this.setTimeControl() },
+                                },
+                                [
+                                    h('option', { props: { value: "fischer" } }, _("Fischer Clock")),
+                                    h('option', { props: { value: "byoyomi" } }, _("Byoyomi Clock")),
+                                    h('option', { props: { value: "correspondence" } }, _("Correspondence")),
+                                    h('option', { props: { value: "unlimited" } }, _("Unlimited")),
+                                ]
                             ),
+                        ]),
+                        h('div#live-tc-block', [
+                            h('label', { attrs: { for: "min" } }, _("Minutes per side:")),
+                            h('span#minutes'),
+                            h('input#min.slider', {
+                                props: { name: "min", type: "range", min: 0, max: this.minutesValues.length - 1, value: vMin },
+                                on: { input: e => this.setMinutes(parseInt((e.target as HTMLInputElement).value)) },
+                                hook: { insert: vnode => this.setMinutes(parseInt((vnode.elm as HTMLInputElement).value)) },
+                            }),
+                            h('label#incrementlabel', { attrs: { for: "inc" } }, ''),
+                            h('span#increment'),
+                            h('input#inc.slider', {
+                                props: { name: "inc", type: "range", min: 0, max: this.incrementValues.length - 1, value: vInc },
+                                on: { input: e => this.setIncrement(this.incrementValues[parseInt((e.target as HTMLInputElement).value)]) },
+                                hook: { insert: vnode => this.setIncrement(this.incrementValues[parseInt((vnode.elm as HTMLInputElement).value)]) },
+                            }),
+                            h('div#byoyomi-period', [
+                                h('label#byoyomiLabel', { attrs: { for: "byo" } }, _('Periods')),
+                                h('select#byo', {
+                                    props: { name: "byo" },
+                                },
+                                    [ 1, 2, 3 ].map((n, idx) => h('option', { props: { value: n }, attrs: { selected: (idx === vByoIdx) } }, n))
+                                ),
+                            ]),
+                        ]),
+                        h('div#correspondence-tc-block', [
+                            h('label', { attrs: { for: "days" } }, _("Days per move:")),
+                            h('span#days'),
+                            h('input#day.slider', {
+                                props: { name: "day", type: "range", min: 0, max: this.daysValues.length - 1, value: vDays },
+                                on: { input: e => this.setDays(this.daysValues[parseInt((e.target as HTMLInputElement).value)]) },
+                                hook: { insert: vnode => this.setDays(this.daysValues[parseInt((vnode.elm as HTMLInputElement).value)]) },
+                            }),
                         ]),
                         h('form#game-mode', [
                             h('div.radio-group', [
@@ -494,14 +521,10 @@ export class LobbyController implements ChatController {
         let e;
         e = document.getElementById('variant') as HTMLSelectElement;
         const variant = VARIANTS[e.options[e.selectedIndex].value];
-        const byoyomi = variant.rules.defaultTimeControl === "byoyomi";
         // TODO use toggle class instead of setting style directly
         document.getElementById('chess960-block')!.style.display = variant.chess960 ? 'block' : 'none';
-        document.getElementById('byoyomi-period')!.style.display = byoyomi ? 'block' : 'none';
         e = document.getElementById('fen') as HTMLInputElement;
         e.value = "";
-        e = document.getElementById('incrementlabel') as HTMLSelectElement;
-        patch(e, h('label#incrementlabel', { attrs: { for: "inc"} }, (byoyomi ? _('Byoyomi in seconds:') : _('Increment in seconds:'))));
         e = document.getElementById('alternate-start-block') as HTMLElement;
         e.innerHTML = "";
         if (variant.alternateStart) {
@@ -520,6 +543,17 @@ export class LobbyController implements ChatController {
         }
         this.setStartButtons();
     }
+    private setTimeControl() {
+        let e: HTMLSelectElement;
+        e = document.getElementById('tc-type')
+        let selected_tc = e.options[e.selectedIndex].value
+        document.getElementById('byoyomi-period')!.style.display = selected_tc === 'byoyomi' ? 'block' : 'none';
+        document.getElementById('live-tc-block')!.style.display = selected_tc === 'fischer' || selected_tc === 'byoyomi' ? 'block' : 'none';
+        document.getElementById('correspondence-tc-block')!.style.display = selected_tc === 'correspondence' ? 'block' : 'none';
+        e = document.getElementById('incrementlabel') as HTMLSelectElement;
+        patch(e, h('label#incrementlabel', { attrs: { for: "inc"} }, (selected_tc === 'byoyomi' ? _('Byoyomi in seconds:') : _('Increment in seconds:'))));
+        this.setStartButtons();
+    }
     private setAlternateStart(variant: Variant) {
         let e: HTMLSelectElement;
         e = document.getElementById('alternate-start') as HTMLSelectElement;
@@ -536,6 +570,10 @@ export class LobbyController implements ChatController {
     }
     private setIncrement(increment: number) {
         document.getElementById("increment")!.innerHTML = ""+increment;
+        this.setStartButtons();
+    }
+    private setDays(days: number) {
+        document.getElementById("days")!.innerHTML = ""+days;
         this.setStartButtons();
     }
     private setFen() {
@@ -561,11 +599,16 @@ export class LobbyController implements ChatController {
         e.classList.toggle("disabled", !this.validGameData);
     }
     private validateTimeControl() {
+        let e = document.getElementById('tc-type')
+        let selected_tc = e.options[e.selectedIndex].value
+        if (selected_tc == 'correspondence' || selected_tc == 'unlimited') //TODO: decide what to do with this and if that's the chosen solution remove correspondence and unlimited from the options
+            return this.createMode !== 'playAI';
+
         const min = Number((document.getElementById('min') as HTMLInputElement).value);
         const inc = Number((document.getElementById('inc') as HTMLInputElement).value);
         const minutes = this.minutesValues[min];
 
-        const e = document.querySelector('input[name="mode"]:checked') as HTMLInputElement;
+        e = document.querySelector('input[name="mode"]:checked') as HTMLInputElement;
         const rated = e.value === "1";
 
         const atLeast = (this.createMode === 'playAI') ? ((min > 0 && inc > 0) || (min >= 1 && inc === 0)) : (min + inc > 0);
