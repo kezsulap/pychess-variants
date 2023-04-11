@@ -202,7 +202,7 @@ export class LobbyController implements ChatController {
             seek.byoyomi === byoyomiPeriod &&
             seek.chess960 === chess960 &&
             seek.rated === rated
-        );
+        ); //TODO: add more fields (and possibly refactor somehow...)
     }
 
     createSeek(color: string) {
